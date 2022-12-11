@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'home/book-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main id="book-detail-main">
+    <section id="book-detail-section">
+        <div id="book-detail-header">
+            <img src="{{ book.cover.url }}" id="book-detail-header-image">
+            <div id="book-detail-header-text">
+                <h1 id="book-title">{{ book.book_name }}</h1>
+                <p>By {{ book.author }}</p>
+                <a href="{{ book.purchase_link }}" id="buy-now-btn" target="_blank"><span>Buy Now</span></a>
+                <span id="add-tf-btn">Add to favourites</span>
+            </div>
+        </div>
+
+        <p>{{ book.summary|linebreaks }}</p>
+    </section>
+    <aside>
+        <h3>What People have to say about this book</h2>
+        <div id="comment-div">
+            {% if request.user.is_authenticated %}
+            <form method="POST" action="{% url 'book-detail-page' book.slug %}" id="comment-form">
+                {% csrf_token %}
+                {% for field in comment_form %}
+                    {{ field }}
+                {% endfor %}
+                <input type="submit" value="Post">
+            </form>
+            {% else %}
+            <button id="comment-login-btn" onclick="openURL('login')">Login to post a comment!</button>
+            {% endif %}
+
+            <div id="all-comments-div">
+                <ul>
+                    {% if not comments %}
+                    <h4 id="no-comments-heading">No comments yet</h4>
+
+                    {% else %}
+                    {% for comment in comments %}
+                    <li>
+                        <div id="comment-detail">
+                            <i class="fa-solid fa-circle-user fa-xl"></i>
+                            <h4>{{comment.username}}</h4>
+                            <span>{{comment.date_posted|naturaltime}}</span>
+                        </div>
+                        
+                            {{comment.text|linebreaks}}
+                        
+                    </li>
+                    {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+    </aside>
+</main>
+
+{% endblock %}

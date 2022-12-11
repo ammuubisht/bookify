@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'home/homepage.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <section id="main-banner">
+        <div id="main-banner-div">
+            <h1>Read summaries of popular books</h1>
+            <p>Open yourselves to new possibilities</p>
+        </div>
+    </section>
+
+    <section id="books-section">
+        
+            {% for book in books %}
+            <a href="{% url 'book-detail-page' book.slug %}">
+                <div class="single-book">
+                    <img src="{{ book.cover.url }}" class="book-cover-thumbnail">
+                    <!-- <h1>{{ book.book_name }}</h1> -->
+                    <!-- <p>{{book.author}}</p> -->
+                </div>
+            </a>
+            {% endfor %}
+
+        
+
+    </section>
+</main>
+{% endblock %}

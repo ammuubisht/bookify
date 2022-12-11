@@ -1,0 +1,68 @@
+<nav>
+    <h1><a href="{% url 'homepage' %}">Bookify</a></h1>
+
+    <!-- <div id="middle-nav-div">
+        <p>Books</p>
+        <p>Users</p>
+    </div> -->
+
+    <div id="search-container">
+        <form action="{% url 'homepage'%}" method="get">
+            <i class="fa-solid fa-magnifying-glass fa-sm search-icon"></i>
+            <input type="search" placeholder="Search for books" name="search-bar" id="search-bar" required autocomplete="off">
+            <!-- <input type="submit" value="search"> -->
+
+            <div id="result-box"></div>
+        </form>
+    </div>
+
+    {% if request.user.is_authenticated %}
+    <div>
+      <a href="{% url 'profile-page' %}"><span id="hello-msg">Hello, {{request.user}}</span></a>
+      <button class="nav-btn login" onclick="openURL('logout')">Logout</button>
+    </div>
+    {% else %}
+    <div>
+        <button class="nav-btn login" onclick="openURL('login')">Login</button>
+        <button class="nav-btn create-account" onclick="openURL('signup')">Create an account</button>
+    </div>
+    {% endif %}
+</nav>
+
+<script>
+     const openURL = (url) =>{
+            window.open(`/${url}`, '_self')
+        }
+
+      const data = "{{book_titles}}";
+      const rdata = JSON.parse(data.replace(/&#x27;/g, '"'));
+      console.log(rdata);
+
+      const input = document.getElementById("search-bar")
+      console.log(input);
+      const resultBox = document.getElementById("result-box");
+
+      var filteredBooks = []
+
+      input.addEventListener('keyup', (e) => {
+        resultBox.style.display = "block";
+        resultBox.innerHTML = "";
+
+        filteredBooks = rdata.filter((book)=> book[0].includes(e.target.value.toLowerCase()))
+        if (filteredBooks.length > 0) {
+            filteredBooks.slice(0, 10).map((book)=>{
+                console.log(book[1]);
+                resultBox.innerHTML += `<a href='/book/${book[1]}'><div class="search-results"><span class="result-span">${book[0]}</span></div></a>`
+            }
+            )
+        } else {
+          resultBox.innerHTML += `<span class="search-results not-found">Couldn't found "${e.target.value}"</span>`;
+        }
+
+        if (e.target.value.length === 0) {
+          resultBox.innerHTML = "";
+          resultBox.style.display = "none";
+        }
+      })
+
+</script>
